@@ -1,18 +1,19 @@
 import { ThermalPrinter, PrinterTypes, CharacterSet } from 'node-thermal-printer';
 import express from 'express'
-import cfg from './config/config.json' assert {type: "json"}
 import cors from 'cors'
+
 const app = express()
 app.use(express.json())
 app.use(cors())
 
 let printer = new ThermalPrinter({
-  type: PrinterTypes[cfg.printer.type],
-  interface: cfg.printer.interface,
-  characterSet: CharacterSet[cfg.printer.characterSet]
+  type: PrinterTypes[process.env.PRINTER_TYPE??"EPSON"],
+  interface: process.env.PRINTER_INTERFACE??"printer:auto",
+  characterSet: CharacterSet.PC850_MULTILINGUAL,
 });
-printer.println("rodando")
+printer.println("")
 printer.execute()
+printer.clear()
 let usingPrint = false
 
 async function checkPrinting() {
@@ -86,4 +87,4 @@ app.post('/query', async (req, res) => {
   res.json({ error: false })
 })
 
-app.listen(cfg.port, () => console.log(`running at ${cfg.port}`))
+app.listen(process.env.PORT??8888, () => console.log(`running at ${process.env.PORT??8888}`))
