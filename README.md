@@ -1,29 +1,45 @@
-### API Web de Impressora Térmica
+### Thermal Printer Web API
 
-#### Descrição
+#### Description
 
-A API Web de Impressora Térmica fornece um endpoint que permite imprimir textos em uma impressora térmica. A impressora térmica precisa estar conectada à rede ou ao dispositivo no qual o serviço estiver sendo executado.
+The Thermal Printer Web API provides an endpoint for printing text on a thermal printer. The thermal printer needs to be connected to the network or the device where the service is running.
 
 #### Endpoint
 
 - **URL**: `POST /query`
-- **Descrição**: Esse endpoint recebe uma lista de comandos e textos a serem impressos e os envia para a impressora térmica. Os comandos são fornecidos no corpo da solicitação como uma lista de strings.
+- **Description**: This endpoint receives a list of commands and texts to be printed and sends them to the thermal printer. The commands are provided in the request body as a list of strings.
 
-#### Corpo da Solicitação (Exemplo)
+#### Request Body (Example)
 
 ```json
 {
-  "query": [
+"query": [
     [ "center" ],
-    [ "println", "Transacao 47" ],
+    [ "println", "Transaction 47" ],
     [ "left" ],
     [ "println", "------------------------------------------------" ],
-    [ "println", "Tipo: Entrada" ],
-    [ "println", "Bote: SSC Tuatara" ],
-    [ "println", "Fornecedor: Pensilvania" ],
-    [ "code128", "https://kruceo.com"]
-    [ "qrcode" , "https://kruceo.com"]
+    [ "println", "Type: Entry" ],
+    [ "println", "Boat: SSC Tuatara" ],
+    [ "println", "Supplier: Pennsylvania" ],
+    [ "code128", "https://kruceo.com"],
+    [ "qrcode" , "https://kruceo.com"],
     [ "cut" ]
   ]
 }
+```
+
+#### Docker Command for Printer Connection
+
+To run the printer connection in a Docker container, use the following command:
+
+##### Linux
+
+```bash
+docker run --rm -it --device=/dev/usb/lp0 rafola/thermal-printer
+```
+
+##### Windows
+
+```bash
+docker run --rm -it --device=//./COM0 rafola/thermal-printer
 ```
