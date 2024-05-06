@@ -1,0 +1,10 @@
+{
+    "examplesOfInterface":["//./COM3","/dev/usb/lp0","printer:TM-T20X"],
+    
+    "port": 8888,
+    "printer": {
+        "type": "EPSON",
+        "interface": "//./COM3",
+        "characterSet": "PC850_MULTILINGUAL"
+    }
+}
