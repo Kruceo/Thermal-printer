@@ -1,6 +1,7 @@
 package lib
 
 import (
+	"os"
 	"strings"
 )
 
@@ -20,4 +21,12 @@ func String2ExtASCII(str string) []byte {
 	}
 
 	return buffer
+}
+
+func GetEnvOrDefault(key, defaultValue string) string {
+	value, exists := os.LookupEnv(key)
+	if !exists {
+		return defaultValue
+	}
+	return value
 }

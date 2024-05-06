@@ -35,19 +35,70 @@ func GetDevice(vid, pid gousb.ID) DeviceShortcut {
 	// ou atraves de uma configuração passada na funcao
 	cfg, err := dev.Config(1)
 	if err != nil {
-		log.Fatalf("Error until getting device config.\n%s", err.Error())
+		log.Fatalf("Error getting the device config.\n%s", err.Error())
 	}
 	defer cfg.Close()
 
 	i, err := cfg.Interface(0, 0)
 	if err != nil {
-		log.Fatalf("Error until getting device interface.\n%s", err.Error())
+		log.Fatalf("Error getting the device interface.\n%s", err.Error())
 	}
 
 	epOut, err := i.OutEndpoint(1)
 	if err != nil {
-		log.Fatalf("Error until getting device output endpoint.\n%s", err.Error())
+		log.Fatalf("Error getting the device output endpoint.\n%s", err.Error())
 	}
 
 	return DeviceShortcut{VID: vid, PID: pid, VendorName: man, ProductName: pro, Out: *epOut}
+}
+
+func GetDeviceByName(vendorName string, productName string) DeviceShortcut {
+	ctx := gousb.NewContext()
+	defer ctx.Close()
+
+	devs, err := ctx.OpenDevices(func(desc *gousb.DeviceDesc) bool { return true })
+	if err != nil {
+		log.Fatalf("Error getting the devices:\n%s", err.Error())
+	}
+
+	var selectedDev *gousb.Device
+
+	for _, dev := range devs {
+		defer dev.Close()
+		devName, err := dev.Product()
+		if err != nil {
+			log.Fatalf("Error getting product name:\n%s", err.Error())
+		}
+		venName, err := dev.Manufacturer()
+		if err != nil {
+			log.Fatalf("Error getting vendor name:\n%s", err.Error())
+		}
+		if devName == productName && vendorName == venName {
+			selectedDev = dev
+		}
+	}
+
+	if selectedDev == nil {
+		log.Fatalf("No one device with given name.")
+	}
+
+	selectedDev.SetAutoDetach(true)
+
+	cfg, err := selectedDev.Config(1)
+	if err != nil {
+		log.Fatalf("Error getting the device config.\n%s", err.Error())
+	}
+	defer cfg.Close()
+
+	i, err := cfg.Interface(0, 0)
+	if err != nil {
+		log.Fatalf("Error getting the device interface.\n%s", err.Error())
+	}
+
+	epOut, err := i.OutEndpoint(1)
+	if err != nil {
+		log.Fatalf("Error getting the device output endpoint.\n%s", err.Error())
+	}
+
+	return DeviceShortcut{VID: selectedDev.Desc.Product, PID: selectedDev.Desc.Vendor, VendorName: vendorName, ProductName: productName, Out: *epOut}
 }
