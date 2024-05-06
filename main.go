@@ -6,6 +6,8 @@ import (
 	"log"
 	"net/http"
 	"thermal-printer/lib"
+	"thermal-printer/lib/configs/epson"
+	"time"
 )
 
 type QueryRequest struct {
@@ -13,58 +15,59 @@ type QueryRequest struct {
 }
 
 func main() {
-	// Initialize a new Context.
 	v := lib.GetDevice(0x04b8, 0x0e27)
 
-	epOut := v.Out
-
-	// inputs := [][]byte{
-
-	// 	{0x1B, 0x52, 12}, //select latin america(12) character set
-	// 	{0x1B, 0x40},     //init
-	// 	// {0x10, 0x14},       //clear
-	// 	[]byte(strings.Repeat("-", 47) + "\n"),
-	// 	[]byte(lib.CenterString("VASCO", 47)),
-	// 	{0x1b, 0x64, 5},    //feed 5 lines
-	// 	{0x1D, 0x56, 0x00}, //cut
-	// }
-
-	// for _, v := range inputs {
-	// 	bytesWritten, err := epOut.Write(v)
-	// 	if err != nil {
-	// 		log.Fatalf("Erro ao escrever dados: %v", err)
-	// 	}
-	// 	fmt.Printf("%d bytes enviados para o dispositivo\n", bytesWritten)
-	// }
+	MainPrinter := epson.CreateEpsonPrinter(v.Out)
 
 	http.HandleFunc("/query", func(w http.ResponseWriter, r *http.Request) {
+
+		// Handle preflight OPTIONS requests, requisited by CORS
+		if r.Method == "OPTIONS" {
+			w.Header().Set("Access-Control-Allow-Origin", "*")
+			w.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS")
+			w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
 		if r.Method != "POST" {
 			return
 		}
 
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-
 		var decoded QueryRequest
 		err := json.NewDecoder(r.Body).Decode(&decoded)
 		if err != nil {
-			log.Fatal("Erro ao decodificar\n", err.Error())
+			log.Fatal("Decode error\n", err.Error())
 		}
 
 		var mode string = "left"
 
+		fmt.Println(r.Host, len(decoded.Query), "queries")
+
+		//init, clear buffers
+		MainPrinter.Clear()
+		// set character set to "TURKISH"
+		MainPrinter.Write(epson.WPC1254_Turkish)
+
 		for _, v := range decoded.Query {
 			switch v[0] {
 			case "println":
+
 				if mode == "left" {
-					epOut.Write([]byte(v[1] + "\n"))
+					inputStr := v[1] + "\n"
+					inputASCII := lib.String2ExtASCII(inputStr)
+					MainPrinter.Write(inputASCII)
 				}
 				if mode == "center" {
-					epOut.Write([]byte(lib.CenterString(v[1], 49) + "\n"))
+					inputStr := lib.CenterString(v[1], 49) + "\n"
+					inputASCII := lib.String2ExtASCII(inputStr)
+					MainPrinter.Write(inputASCII)
 				}
 
 			case "cut":
-				epOut.Write([]byte{0x1b, 0x64, 5})
-				epOut.Write([]byte{0x1D, 0x56, 0x00})
+				MainPrinter.FeedLines(5)
+				time.Sleep(10000)
+				MainPrinter.FullCut()
 
 			case "center":
 				mode = "center"
@@ -73,16 +76,29 @@ func main() {
 				mode = "left"
 			}
 		}
+		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.WriteHeader(http.StatusOK)
+		w.Write([]byte(""))
 	})
 
 	http.HandleFunc("/get/width", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("49"))
+		w.Header().Add("Content-Type", "application/json")
+		w.Write([]byte("{\"width\":48}"))
 	})
 
 	fmt.Println("Listening 8888")
 	http.ListenAndServe(":8888", nil)
 
+}
+
+func convertToExtendedASCII(text string) string {
+	extendedASCII := ""
+	for _, char := range text {
+		if char >= 128 && char <= 255 {
+			extendedASCII += string(char)
+		}
+	}
+	return extendedASCII
 }

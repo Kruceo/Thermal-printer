@@ -6,7 +6,7 @@ import (
 	"github.com/google/gousb"
 )
 
-type DevideShortcut struct {
+type DeviceShortcut struct {
 	VID         gousb.ID
 	PID         gousb.ID
 	VendorName  string
@@ -14,11 +14,7 @@ type DevideShortcut struct {
 	Out         gousb.OutEndpoint
 }
 
-func (p DevideShortcut) getting() {
-
-}
-
-func GetDevice(vid, pid gousb.ID) DevideShortcut {
+func GetDevice(vid, pid gousb.ID) DeviceShortcut {
 	ctx := gousb.NewContext()
 	defer ctx.Close()
 
@@ -53,5 +49,5 @@ func GetDevice(vid, pid gousb.ID) DevideShortcut {
 		log.Fatalf("Error until getting device output endpoint.\n%s", err.Error())
 	}
 
-	return DevideShortcut{VID: vid, PID: pid, VendorName: man, ProductName: pro, Out: *epOut}
+	return DeviceShortcut{VID: vid, PID: pid, VendorName: man, ProductName: pro, Out: *epOut}
 }
