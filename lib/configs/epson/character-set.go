@@ -2,65 +2,68 @@ package epson
 
 import "thermal-printer/lib"
 
-var PC437_USA_Standard_Europe = lib.CharacterSetBytes{0x1B, 0x74, 0}
-var Katakana = lib.CharacterSetBytes{0x1B, 0x74, 1}
-var PC850_Multilingual = lib.CharacterSetBytes{0x1B, 0x74, 2}
-var PC860_Portuguese = lib.CharacterSetBytes{0x1b, 0x74, 3}
-var PC863_Canadian_French = lib.CharacterSetBytes{0x1b, 0x74, 4}
-var PC865_Nordic = lib.CharacterSetBytes{0x1b, 0x74, 5}
-var Hiragana = lib.CharacterSetBytes{0x1b, 0x74, 6}
-var One_pass_pring_Kanji_characters_1 = lib.CharacterSetBytes{0x1b, 0x74, 7}
-var One_pass_pring_Kanji_characters_2 = lib.CharacterSetBytes{0x1b, 0x74, 8}
-var PC851_Greek = lib.CharacterSetBytes{0x1b, 0x74, 11}
-var PC853_Turkish = lib.CharacterSetBytes{0x1b, 0x74, 12}
-var PC857_Turkish = lib.CharacterSetBytes{0x1b, 0x74, 13}
-var PC737_Greek = lib.CharacterSetBytes{0x1b, 0x74, 14}
-var ISO8859_7_Greek = lib.CharacterSetBytes{0x1b, 0x74, 15}
-var WPC1252 = lib.CharacterSetBytes{0x1b, 0x74, 16}
-var PC866_Cyrillic_2 = lib.CharacterSetBytes{0x1b, 0x74, 17}
-var PC852_Latin_2 = lib.CharacterSetBytes{0x1b, 0x74, 18}
-var PC858_Euro = lib.CharacterSetBytes{0x1b, 0x74, 19}
-var Thai_Character_Code_42 = lib.CharacterSetBytes{0x1b, 0x74, 20}
-var Thai_Character_Code_11 = lib.CharacterSetBytes{0x1b, 0x74, 21}
-var Thai_Character_Code_13 = lib.CharacterSetBytes{0x1b, 0x74, 22}
-var Thai_Character_Code_14 = lib.CharacterSetBytes{0x1b, 0x74, 23}
-var Thai_Character_Code_16 = lib.CharacterSetBytes{0x1b, 0x74, 24}
-var Thai_Character_Code_17 = lib.CharacterSetBytes{0x1b, 0x74, 25}
-var Thai_Character_Code_18 = lib.CharacterSetBytes{0x1b, 0x74, 26}
-var TCVN_3_Vietnamese_1 = lib.CharacterSetBytes{0x1b, 0x74, 30}
-var TCVN_3_Vietnamese_2 = lib.CharacterSetBytes{0x1b, 0x74, 31}
-var PC720_Arabic = lib.CharacterSetBytes{0x1b, 0x74, 32}
-var WPC775_Baltic_Rim = lib.CharacterSetBytes{0x1b, 0x74, 33}
-var PC855_Cyrillic = lib.CharacterSetBytes{0x1b, 0x74, 34}
-var PC861_Icelandic = lib.CharacterSetBytes{0x1b, 0x74, 35}
-var PC862_Hebrew = lib.CharacterSetBytes{0x1b, 0x74, 36}
-var PC864_Arabic = lib.CharacterSetBytes{0x1b, 0x74, 37}
-var PC869_Greek = lib.CharacterSetBytes{0x1b, 0x74, 38}
-var ISO8859_2_Latin_2 = lib.CharacterSetBytes{0x1b, 0x74, 39}
-var ISO8859_15_Latin_9 = lib.CharacterSetBytes{0x1b, 0x74, 40}
-var PC1098_Farsi = lib.CharacterSetBytes{0x1b, 0x74, 41}
-var PC1118_Lithuanian = lib.CharacterSetBytes{0x1b, 0x74, 42}
-var PC1119_Lithuanian = lib.CharacterSetBytes{0x1b, 0x74, 43}
-var PC1125_Ukrainian = lib.CharacterSetBytes{0x1b, 0x74, 44}
-var WPC1250_Latin_2 = lib.CharacterSetBytes{0x1b, 0x74, 45}
-var WPC1251_Cyrillic = lib.CharacterSetBytes{0x1b, 0x74, 46}
-var WPC1253_Greek = lib.CharacterSetBytes{0x1b, 0x74, 47}
-var WPC1254_Turkish = lib.CharacterSetBytes{0x1b, 0x74, 48}
-var WPC1255_Hebrew = lib.CharacterSetBytes{0x1b, 0x74, 49}
-var WPC1256_Arabic = lib.CharacterSetBytes{0x1b, 0x74, 50}
-var WPC1257_Baltic_Rim = lib.CharacterSetBytes{0x1b, 0x74, 51}
-var WPC1258_Vietnamese = lib.CharacterSetBytes{0x1b, 0x74, 52}
-var KZ_1048_Kazakhstan = lib.CharacterSetBytes{0x1b, 0x74, 53}
-var Devanagari = lib.CharacterSetBytes{0x1b, 0x74, 66}
-var Bengali = lib.CharacterSetBytes{0x1b, 0x74, 67}
-var Tamil = lib.CharacterSetBytes{0x1b, 0x74, 68}
-var Telugu = lib.CharacterSetBytes{0x1b, 0x74, 69}
-var Assamese = lib.CharacterSetBytes{0x1b, 0x74, 70}
-var Oriya = lib.CharacterSetBytes{0x1b, 0x74, 71}
-var Kannada = lib.CharacterSetBytes{0x1b, 0x74, 72}
-var Malayalam = lib.CharacterSetBytes{0x1b, 0x74, 73}
-var Gujarati = lib.CharacterSetBytes{0x1b, 0x74, 74}
-var Punjabi = lib.CharacterSetBytes{0x1b, 0x74, 75}
-var Marathi = lib.CharacterSetBytes{0x1b, 0x74, 82}
-var Page_254 = lib.CharacterSetBytes{0x1b, 0x74, 254}
-var Page_255 = lib.CharacterSetBytes{0x1b, 0x74, 255}
+var CharacterSet = map[string]lib.CharacterSetBytes{
+	"default":                           {0x1B, 0x74, 0},
+	"PC437_USA_Standard_Europe":         {0x1B, 0x74, 0},
+	"Katakana":                          {0x1B, 0x74, 1},
+	"PC850_Multilingual":                {0x1B, 0x74, 2},
+	"PC860_Portuguese":                  {0x1b, 0x74, 3},
+	"PC863_Canadian_French":             {0x1b, 0x74, 4},
+	"PC865_Nordic":                      {0x1b, 0x74, 5},
+	"Hiragana":                          {0x1b, 0x74, 6},
+	"One_pass_pring_Kanji_characters_1": {0x1b, 0x74, 7},
+	"One_pass_pring_Kanji_characters_2": {0x1b, 0x74, 8},
+	"PC851_Greek":                       {0x1b, 0x74, 11},
+	"PC853_Turkish":                     {0x1b, 0x74, 12},
+	"PC857_Turkish":                     {0x1b, 0x74, 13},
+	"PC737_Greek":                       {0x1b, 0x74, 14},
+	"ISO8859_7_Greek":                   {0x1b, 0x74, 15},
+	"WPC1252":                           {0x1b, 0x74, 16},
+	"PC866_Cyrillic_2":                  {0x1b, 0x74, 17},
+	"PC852_Latin_2":                     {0x1b, 0x74, 18},
+	"PC858_Euro":                        {0x1b, 0x74, 19},
+	"Thai_Character_Code_42":            {0x1b, 0x74, 20},
+	"Thai_Character_Code_11":            {0x1b, 0x74, 21},
+	"Thai_Character_Code_13":            {0x1b, 0x74, 22},
+	"Thai_Character_Code_14":            {0x1b, 0x74, 23},
+	"Thai_Character_Code_16":            {0x1b, 0x74, 24},
+	"Thai_Character_Code_17":            {0x1b, 0x74, 25},
+	"Thai_Character_Code_18":            {0x1b, 0x74, 26},
+	"TCVN_3_Vietnamese_1":               {0x1b, 0x74, 30},
+	"TCVN_3_Vietnamese_2":               {0x1b, 0x74, 31},
+	"PC720_Arabic":                      {0x1b, 0x74, 32},
+	"WPC775_Baltic_Rim":                 {0x1b, 0x74, 33},
+	"PC855_Cyrillic":                    {0x1b, 0x74, 34},
+	"PC861_Icelandic":                   {0x1b, 0x74, 35},
+	"PC862_Hebrew":                      {0x1b, 0x74, 36},
+	"PC864_Arabic":                      {0x1b, 0x74, 37},
+	"PC869_Greek":                       {0x1b, 0x74, 38},
+	"ISO8859_2_Latin_2":                 {0x1b, 0x74, 39},
+	"ISO8859_15_Latin_9":                {0x1b, 0x74, 40},
+	"PC1098_Farsi":                      {0x1b, 0x74, 41},
+	"PC1118_Lithuanian":                 {0x1b, 0x74, 42},
+	"PC1119_Lithuanian":                 {0x1b, 0x74, 43},
+	"PC1125_Ukrainian":                  {0x1b, 0x74, 44},
+	"WPC1250_Latin_2":                   {0x1b, 0x74, 45},
+	"WPC1251_Cyrillic":                  {0x1b, 0x74, 46},
+	"WPC1253_Greek":                     {0x1b, 0x74, 47},
+	"WPC1254_Turkish":                   {0x1b, 0x74, 48},
+	"WPC1255_Hebrew":                    {0x1b, 0x74, 49},
+	"WPC1256_Arabic":                    {0x1b, 0x74, 50},
+	"WPC1257_Baltic_Rim":                {0x1b, 0x74, 51},
+	"WPC1258_Vietnamese":                {0x1b, 0x74, 52},
+	"KZ_1048_Kazakhstan":                {0x1b, 0x74, 53},
+	"Devanagari":                        {0x1b, 0x74, 66},
+	"Bengali":                           {0x1b, 0x74, 67},
+	"Tamil":                             {0x1b, 0x74, 68},
+	"Telugu":                            {0x1b, 0x74, 69},
+	"Assamese":                          {0x1b, 0x74, 70},
+	"Oriya":                             {0x1b, 0x74, 71},
+	"Kannada":                           {0x1b, 0x74, 72},
+	"Malayalam":                         {0x1b, 0x74, 73},
+	"Gujarati":                          {0x1b, 0x74, 74},
+	"Punjabi":                           {0x1b, 0x74, 75},
+	"Marathi":                           {0x1b, 0x74, 82},
+	"Page_254":                          {0x1b, 0x74, 254},
+	"Page_255":                          {0x1b, 0x74, 255},
+}

@@ -33,11 +33,18 @@ func main() {
 		log.Fatalf("Bad format in PRINTER_WIDTH (%s):\n%v", lib.GetEnvOrDefault("PRINTER_WIDTH", "48"), err)
 	}
 
+	printerCharsetName := lib.GetEnvOrDefault("PRINTER_CHARSET", "default")
+	printerCharset := epson.CharacterSet[printerCharsetName]
+	if printerCharset == nil {
+		fmt.Printf("Printer CharSet '%s' not exists. Using 'default'.\n", printerCharsetName)
+		printerCharset = epson.CharacterSet["default"]
+	}
+
 	v := lib.GetDeviceByName(printerVendor, printerName)
 
 	fmt.Printf("Using %s %s (%s:%s)\n", v.VendorName, v.ProductName, v.VID, v.PID)
 
-	MainPrinter := epson.CreateEpsonPrinter(v.Out, epson.PC437_USA_Standard_Europe)
+	MainPrinter := epson.CreateEpsonPrinter(v.Out, printerCharset)
 
 	var printing = false
 
