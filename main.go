@@ -54,9 +54,8 @@ func main() {
 		if r.Method == "OPTIONS" {
 			w.Header().Set("Access-Control-Allow-Origin", "*")
 			w.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS")
+			w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 			w.WriteHeader(http.StatusOK)
-			w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
-
 			return
 		}
 
