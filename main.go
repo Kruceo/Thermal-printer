@@ -19,6 +19,9 @@ type QueryRequest struct {
 }
 
 func main() {
+	fmt.Println("Reached devices")
+	lib.ListDevices()
+	fmt.Println()
 
 	// LOAD .env
 	if err := godotenv.Load(); err != nil {
@@ -164,7 +167,7 @@ func main() {
 
 	})
 
-	fmt.Println("Listening 8888")
-	http.ListenAndServe(":8888", nil)
+	fmt.Printf("Listenning %s\n", lib.GetEnvOrDefault("PORT", "8888"))
+	http.ListenAndServe(":"+lib.GetEnvOrDefault("PORT", "8888"), nil)
 
 }

@@ -1,6 +1,7 @@
 package lib
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/google/gousb"
@@ -70,6 +71,7 @@ func GetDeviceByName(vendorName string, productName string) DeviceShortcut {
 			log.Fatalf("Error getting product name:\n%s", err.Error())
 		}
 		venName, err := dev.Manufacturer()
+
 		if err != nil {
 			log.Fatalf("Error getting vendor name:\n%s", err.Error())
 		}
@@ -101,4 +103,28 @@ func GetDeviceByName(vendorName string, productName string) DeviceShortcut {
 	}
 
 	return DeviceShortcut{VID: selectedDev.Desc.Product, PID: selectedDev.Desc.Vendor, VendorName: vendorName, ProductName: productName, Out: *epOut}
+}
+
+func ListDevices() {
+	ctx := gousb.NewContext()
+	defer ctx.Close()
+
+	devs, err := ctx.OpenDevices(func(desc *gousb.DeviceDesc) bool { return true })
+	if err != nil {
+		log.Fatalf("Error getting the devices:\n%s", err.Error())
+	}
+
+	for _, dev := range devs {
+		defer dev.Close()
+		devName, err := dev.Product()
+		if err != nil {
+			log.Fatalf("Error getting product name:\n%s", err.Error())
+		}
+		venName, err := dev.Manufacturer()
+
+		if err != nil {
+			log.Fatalf("Error getting vendor name:\n%s", err.Error())
+		}
+		fmt.Printf("%-45s %s\n", venName, devName)
+	}
 }
