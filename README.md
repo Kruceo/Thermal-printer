@@ -80,6 +80,7 @@ Prints the requested form.
         ["cut"]
     ]
 }
+```
 
 #### Example:
 
