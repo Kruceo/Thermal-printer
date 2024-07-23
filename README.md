@@ -56,6 +56,14 @@ Returns the printer previous configured printer width.
 { "width":48 }
 ```
 
+#### Example:
+
+```js
+const res = await fetch("http://localhost:8888/get/width");
+const data = await res.json();
+console.log(data)
+```
+
 ### ***/query***
 
 Prints the requested form.
@@ -72,4 +80,26 @@ Prints the requested form.
         ["cut"]
     ]
 }
+
+#### Example:
+
+```js
+const body = {
+    query:[
+        ["println","Hello World"],
+        ["println","This is a simple test!"],
+        ["println",""],
+        ["cut"]
+    ]
+}
+
+const options = {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify(body)
+} 
+
+const res = await fetch("http://localhost:8888/query",options);
+console.log(res.status)
 ```
+
