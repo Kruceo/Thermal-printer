@@ -19,11 +19,7 @@ type QueryRequest struct {
 }
 
 func main() {
-	fmt.Println("Reached devices")
-	lib.ListDevices()
-	fmt.Println()
 
-	// LOAD .env
 	if err := godotenv.Load(); err != nil {
 		// log.Fatalf("Error loading .env: %v", err)
 	}
@@ -51,11 +47,13 @@ func main() {
 
 	var printing = false
 
+	var CORS_ORIGIN = lib.GetEnvOrDefault("CORS_ORIGIN", "*")
+
 	http.HandleFunc("/query", func(w http.ResponseWriter, r *http.Request) {
 
 		// Handle preflight OPTIONS requests, requisited by CORS
 		if r.Method == "OPTIONS" {
-			w.Header().Set("Access-Control-Allow-Origin", "*")
+			w.Header().Set("Access-Control-Allow-Origin", CORS_ORIGIN)
 			w.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS")
 			w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 			w.WriteHeader(http.StatusOK)
@@ -80,7 +78,7 @@ func main() {
 		}
 
 		if printing {
-			w.Header().Set("Access-Control-Allow-Origin", "*")
+			w.Header().Set("Access-Control-Allow-Origin", CORS_ORIGIN)
 			w.Header().Add("Content-Type", "application/json")
 			w.WriteHeader(http.StatusBadRequest)
 			w.Write([]byte("{\"error\":true,\"The printer are busy.\"}"))
@@ -97,7 +95,7 @@ func main() {
 		}
 
 		if len(decoded.Query) > 100 {
-			w.Header().Set("Access-Control-Allow-Origin", "*")
+			w.Header().Set("Access-Control-Allow-Origin", CORS_ORIGIN)
 			w.Header().Add("Content-Type", "application/json")
 			w.WriteHeader(http.StatusBadRequest)
 			w.Write([]byte("{\"error\":true,\"The num of queries exceed the max of queries per request.\"}"))
@@ -138,7 +136,7 @@ func main() {
 				mode = "left"
 			}
 		}
-		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Origin", CORS_ORIGIN)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("{\"message\":\"Query created with success.\"}"))
@@ -150,7 +148,7 @@ func main() {
 	http.HandleFunc("/get/width", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(r.Method, r.Host, r.URL.Path)
 		if r.Method == "OPTIONS" {
-			w.Header().Set("Access-Control-Allow-Origin", "*")
+			w.Header().Set("Access-Control-Allow-Origin", CORS_ORIGIN)
 			w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
 			w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 			w.WriteHeader(http.StatusOK)
@@ -160,7 +158,7 @@ func main() {
 			return
 		}
 
-		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Origin", CORS_ORIGIN)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("{\"width\":" + strconv.Itoa(printerWidth) + "}"))
