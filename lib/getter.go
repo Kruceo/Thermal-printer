@@ -19,7 +19,8 @@ func GetDevice(vid, pid gousb.ID) DeviceShortcut {
 	ctx := gousb.NewContext()
 	defer ctx.Close()
 
-	// Open any device with a given VID/PID using a convenience function.0x04b8, 0x0e27
+	// Open any device with a given VID/PID
+	// using a convenience function.0x04b8, 0x0e27
 	dev, err := ctx.OpenDeviceWithVIDPID(vid, pid)
 	if err != nil {
 		log.Fatalf("Could not open a device: %v", err)
@@ -54,13 +55,7 @@ func GetDevice(vid, pid gousb.ID) DeviceShortcut {
 }
 
 func GetDeviceByName(vendorName string, productName string) DeviceShortcut {
-	ctx := gousb.NewContext()
-	defer ctx.Close()
-
-	devs, err := ctx.OpenDevices(func(desc *gousb.DeviceDesc) bool { return true })
-	if err != nil {
-		log.Fatalf("Error getting the devices:\n%s", err.Error())
-	}
+	devs := ListDevices()
 
 	var selectedDev *gousb.Device
 
@@ -105,26 +100,51 @@ func GetDeviceByName(vendorName string, productName string) DeviceShortcut {
 	return DeviceShortcut{VID: selectedDev.Desc.Product, PID: selectedDev.Desc.Vendor, VendorName: vendorName, ProductName: productName, Out: *epOut}
 }
 
-func ListDevices() {
+func ListDevices() []*gousb.Device {
 	ctx := gousb.NewContext()
-	defer ctx.Close()
+	usableVidPids := [][]gousb.ID{}
 
-	devs, err := ctx.OpenDevices(func(desc *gousb.DeviceDesc) bool { return true })
+	devs, err := ctx.OpenDevices(func(desc *gousb.DeviceDesc) bool {
+		// If return true, this will open the device, but in Windows
+		// the driver compatibility is more unstable,
+		// less devices are compatible in vanilla, this cause error in this part if
+		// try to open devices that libusb don't support,
+		// zadig can resolve this in some cases
+		_, devErr := ctx.OpenDeviceWithVIDPID(desc.Vendor, desc.Product)
+
+		if devErr == nil {
+			usableVidPids = append(usableVidPids, []gousb.ID{desc.Vendor, desc.Product})
+		} else {
+			// fmt.Println(devErr)
+		}
+
+		return false
+	})
 	if err != nil {
 		log.Fatalf("Error getting the devices:\n%s", err.Error())
 	}
 
+	for _, v := range usableVidPids {
+		dev, devErr := ctx.OpenDeviceWithVIDPID(v[0], v[1])
+
+		if devErr == nil {
+			devs = append(devs, dev)
+		} else {
+			// fmt.Println(devErr)
+		}
+	}
+
 	for _, dev := range devs {
-		defer dev.Close()
 		devName, err := dev.Product()
 		if err != nil {
 			log.Fatalf("Error getting product name:\n%s", err.Error())
 		}
 		venName, err := dev.Manufacturer()
-
 		if err != nil {
 			log.Fatalf("Error getting vendor name:\n%s", err.Error())
 		}
-		fmt.Printf("%-45s %s\n", venName, devName)
+
+		fmt.Printf("%-45s %-45s %s %s\n", venName, devName, dev.Desc.Vendor.String(), dev.Desc.Product.String())
 	}
+	return devs
 }
