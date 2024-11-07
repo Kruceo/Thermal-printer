@@ -4,8 +4,47 @@ This works only with USB printers, (tested only with EPSON TM-T20X).
 
 ## Requirements 
 
-- libusb-1.0-0
-- libusb-1.0-0-dev
+- **Linux**
+    - golang
+    - libusb-1.0-0
+    - libusb-1.0-0-dev
+- **Windows**
+    - golang
+    - wsys2 (optional)
+    - libusb-1.0
+    - gcc
+    - pkg-config
+    - zadig (optional)
+## Running From Source on Linux
+
+On Linux, setting up to run this program is straightforward. Just install `libusb-1.0` on your distribution, use `go build` to build the program, and then execute the binary.
+
+## Running From Source on Windows
+
+To run this program on Windows, you’ll need to install `gcc`, `pkg-config`, and `libusb-1.0`. It’s recommended to use **MinGW** or a similar tool to install these dependencies. In this example, we’ll use [MSYS2](https://www.msys2.org/) for easy setup, although there are other methods available.
+
+> This guide assumes MSYS2 is installed at `C:/msys2`.
+
+**In an MSYS2 shell:**
+
+```shell
+pacman -S mingw-w64-ucrt-x86_64-gcc
+pacman -S mingw-w64-x86_64-pkg-config
+pacman -S mingw-w64-x86_64-libusb
+```
+
+### Important Steps
+
+After installing these packages, you’ll need to update your Windows environment variables:
+
+1. Add `C:/msys2/ucrt/bin` and `C:/msys2/mingw64/bin` to the `PATH` environment variable.
+2. If `PKG_CONFIG_PATH` doesn’t exist, create it and set it to `C:/msys2/mingw64/lib/pkgconfig`.
+
+This setup allows you to successfully run `go build`.
+
+### Troubleshooting Device Detection
+
+If the program doesn’t recognize your device, it may be due to driver issues. You can use the [Zadig](https://zadig.akeo.ie/) tool to replace the device driver with *WinUSB* or *libusbK*, then try running the program again.
 
 ## Configuration
 
@@ -25,7 +64,7 @@ PRINTER_CHARSET=WPC1254_Turkish
 You can use `usbutils` to easily reach your device vendor and name.
 Using the command `lsusb`.
 
-### Running in Windows WSL
+### Running in Windows WSL and Windows Docker
 
 You will like to use `usbip` in windows WSL to run this in a Windows Platform
 
