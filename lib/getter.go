@@ -1,7 +1,6 @@
 package lib
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/google/gousb"
@@ -132,19 +131,6 @@ func ListDevices() []*gousb.Device {
 		} else {
 			// fmt.Println(devErr)
 		}
-	}
-
-	for _, dev := range devs {
-		devName, err := dev.Product()
-		if err != nil {
-			log.Fatalf("Error getting product name:\n%s", err.Error())
-		}
-		venName, err := dev.Manufacturer()
-		if err != nil {
-			log.Fatalf("Error getting vendor name:\n%s", err.Error())
-		}
-
-		fmt.Printf("%-45s %-45s %s %s\n", venName, devName, dev.Desc.Vendor.String(), dev.Desc.Product.String())
 	}
 	return devs
 }
